@@ -5,8 +5,8 @@
             [compojure.route :as route]))
 
 (defroutes app
-  (GET "/" [] "<h1>Hello World!</h1>")
-  (route/not-found "<h1>Not Found</h1>"))
+  (GET "/" [] "Hello World!")
+  (route/not-found "Not Found>"))
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 3000))]
