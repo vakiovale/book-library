@@ -6,7 +6,7 @@
 
 (defroutes app
   (GET "/" [] "Hello World!")
-  (route/not-found "Not Found>"))
+  (route/not-found "Not Found"))
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 3000))]
