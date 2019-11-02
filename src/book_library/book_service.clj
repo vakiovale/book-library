@@ -11,3 +11,8 @@
   "Creates a book"
   [book]
   (ABook. (UUID/randomUUID) (:name book)))
+
+(defn get-books
+  "Get list of books"
+  []
+  (vector))

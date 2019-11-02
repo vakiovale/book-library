@@ -11,4 +11,6 @@
         (testing "book should have a name"
           (is (= (Book/get-name book) "The Greatest Book")))
         (testing "book's ID should be an UUID"
-          (is (uuid? (Book/get-id book))))))))
+          (is (uuid? (Book/get-id book))))))
+    (testing "should get empty list of books if no books exist"
+      (is (= (empty? (service/get-books)))))))
