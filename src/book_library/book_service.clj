@@ -2,6 +2,9 @@
   (:require [book-library.book :refer :all])
   (:import (java.util UUID)))
 
+(def book-store
+  (atom {:books []}))
+
 (defrecord ABook [id name]
   Book
   (get-id [this] id)
@@ -10,9 +13,11 @@
 (defn create-book
   "Creates a book"
   [book]
-  (ABook. (UUID/randomUUID) (:name book)))
+  (let [book (ABook. (UUID/randomUUID) (:name book))]
+    book))
 
 (defn get-books
   "Get list of books"
   []
-  (vector))
+  (:books book-store))
+
