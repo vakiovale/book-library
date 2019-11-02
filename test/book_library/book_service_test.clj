@@ -7,5 +7,8 @@
   (testing "Book service"
     (testing "should create a book"
       (let [book (service/create-book {:name "The Greatest Book"})]
-        (is (= (Book/get-name book) "The Greatest Book"))
-        (is (satisfies? Book/Book book))))))
+        (is (satisfies? Book/Book book))
+        (testing "book should have a name"
+          (is (= (Book/get-name book) "The Greatest Book")))
+        (testing "book's ID should be an UUID"
+          (is (uuid? (Book/get-id book))))))))

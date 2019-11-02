@@ -1,11 +1,13 @@
 (ns book-library.book-service
-  (:require [book-library.book :refer :all]))
+  (:require [book-library.book :refer :all])
+  (:import (java.util UUID)))
 
-(defrecord ABook [name]
+(defrecord ABook [id name]
   Book
+  (get-id [this] id)
   (get-name [this] name))
 
 (defn create-book
   "Creates a book"
   [book]
-  (ABook. (:name book)))
+  (ABook. (UUID/randomUUID) (:name book)))
