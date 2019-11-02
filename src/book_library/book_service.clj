@@ -14,10 +14,11 @@
   "Creates a book"
   [book]
   (let [book (ABook. (UUID/randomUUID) (:name book))]
+    (swap! book-store update-in [:books] conj book)
     book))
 
 (defn get-books
   "Get list of books"
   []
-  (:books book-store))
+  (:books @book-store))
 
