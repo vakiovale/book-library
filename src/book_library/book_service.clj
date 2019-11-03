@@ -12,6 +12,9 @@
 (defn get-books-from-store [store]
   (:books @store))
 
+(defn remove-book-from-store [id store]
+  (swap! store update-in [:books] (fn [books] (remove #(= (:id %) id) books))))
+
 (defrecord ABook [id name]
   Book
   (get-id [this] id)
@@ -28,3 +31,7 @@
   []
   (get-books-from-store book-store))
 
+(defn remove-book
+  "Removes a book"
+  [id]
+  (remove-book-from-store id book-store))

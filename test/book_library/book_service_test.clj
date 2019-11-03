@@ -26,3 +26,10 @@
     (service/create-book {:name "Bad Book"})
     (let [books (service/get-books)]
       (is (= (count books) 2)))))
+
+(deftest removing-books
+  (testing "should remove book if ID exists"
+    (let [book (service/create-book {:name "Remove me!"})]
+      (is (= (count (service/get-books)) 1))
+      (service/remove-book (:id book))
+      (is (= (count (service/get-books)))))))
