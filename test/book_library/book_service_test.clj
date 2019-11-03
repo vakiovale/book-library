@@ -42,3 +42,10 @@
       (is (= (count book-names) 2))
       (is (.contains book-names "Don't remove me"))
       (is (.contains book-names "It would be nice not to remove me")))))
+
+(deftest get-book-by-id
+  (testing "should get book by id"
+    (let [id (Book/get-id (service/create-book {:name "Find me, please!"}))]
+      (is (= (Book/get-id (service/get-book id)) id))))
+  (testing "should get nil with non existing ID"
+    (is (nil? (service/get-book (UUID/randomUUID))))))
