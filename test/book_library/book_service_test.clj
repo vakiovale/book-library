@@ -1,7 +1,8 @@
 (ns book-library.book-service-test
   (:require [clojure.test :refer :all]
             [book-library.book :as Book]
-            [book-library.book-service :as service]))
+            [book-library.book-service :as service])
+  (:import (java.util UUID)))
 
 (defn setup [test]
   (reset! service/book-store {:books []})
@@ -32,4 +33,12 @@
     (let [book (service/create-book {:name "Remove me!"})]
       (is (= (count (service/get-books)) 1))
       (service/remove-book (:id book))
-      (is (= (count (service/get-books)))))))
+      (is (= (count (service/get-books))))))
+  (testing "should not remove anything if ID does not exist"
+    (service/create-book {:name "Don't remove me"})
+    (service/create-book {:name "It would be nice not to remove me"})
+    (service/remove-book (UUID/randomUUID))
+    (let [book-names (map Book/get-name (service/get-books))]
+      (is (= (count book-names) 2))
+      (is (.contains book-names "Don't remove me"))
+      (is (.contains book-names "It would be nice not to remove me")))))
