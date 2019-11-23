@@ -12,7 +12,7 @@
 
 (defroutes app
            (GET "/" [] "Hello World!")
-           (POST "/books" req
+           (POST "/books" []
              (->
                book-creation-handler
                (wrap-json-body {:keywords? true})
