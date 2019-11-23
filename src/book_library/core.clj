@@ -5,10 +5,11 @@
             [ring.middleware.json :refer :all]
             [compojure.route :as route]
             [ring.util.response :refer :all]
+            [book-library.book-service :as service]
             [cheshire.core :refer [parse-string]]))
 
 (defn book-creation-handler [req]
-  (created "/books" {:name (get-in req [:body :name])}))
+  (created "/books" (service/create-book (:body req))))
 
 (defroutes app
            (GET "/" [] "Hello World!")
