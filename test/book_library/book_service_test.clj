@@ -49,3 +49,4 @@
       (is (= (Book/get-id (service/get-book id)) id))))
   (testing "should get nil with non existing ID"
     (is (nil? (service/get-book (UUID/randomUUID))))))
+

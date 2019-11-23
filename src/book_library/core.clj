@@ -11,8 +11,12 @@
 (defn book-creation-handler [req]
   (created "/books" (service/create-book (:body req))))
 
+(defn get-books-handler [req]
+  (response (service/get-books)))
+
 (defroutes app
            (GET "/" [] "Hello World!")
+           (GET "/books" [] (wrap-json-response get-books-handler))
            (POST "/books" []
              (->
                book-creation-handler

@@ -21,3 +21,9 @@
                           (mock/json-body {:name "My best book"})))]
       (is (= (:name (cheshire.core/parse-string (:body response) true)) "My best book"))
       (is (= (:status response) 201)))))
+
+(deftest get-books
+  (testing "should get list of books"
+    (let [response (app (mock/request :get "/books"))]
+      (prn (cheshire.core/parse-string (:body response)))
+      (is (= (vector? (cheshire.core/parse-string (:body response))))))))
