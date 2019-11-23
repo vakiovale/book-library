@@ -2,7 +2,7 @@
   (:require [clojure.test :refer :all]
             [ring.mock.request :as mock]
             [book-library.core :refer :all]
-            [cheshire.core :refer [generate-string]]))
+            [cheshire.core :refer :all]))
 
 (deftest test-app
   (testing "main route"
@@ -18,7 +18,6 @@
   (testing "should create a book"
     (let [response (app (->
                           (mock/request :post "/books")
-                          (mock/json-body (generate-string {:name "My best book"}))))]
-      (prn response)
-      (is (= (:name (:body response)) "My best book"))
+                          (mock/json-body {:name "My best book"})))]
+      (is (= (:name (cheshire.core/parse-string (:body response) true)) "My best book"))
       (is (= (:status response) 201)))))
