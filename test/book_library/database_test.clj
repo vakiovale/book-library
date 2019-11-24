@@ -9,9 +9,8 @@
     (is (thrown? Exception (open-db-connection "bad-uri"))))
 
   (testing "should connect with default uri, insert test value and drop collection"
-    (let [{:keys [conn db]} (open-db-connection)]
+    (let [conn (open-db-connection)]
       (is (not (nil? conn)))
-      (is (not (nil? db)))
       (let [test-db (mg/get-db conn "test-drop")]
         (mc/insert test-db "test-coll" {:value "you just inserted me"})
         (is (not (empty? (mc/find-maps test-db "test-coll"))))
