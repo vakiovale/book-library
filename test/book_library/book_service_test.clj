@@ -1,11 +1,12 @@
 (ns book-library.book-service-test
   (:require [clojure.test :refer :all]
             [book-library.book :as Book]
+            [book-library.book-store :as store]
             [book-library.book-service :as service])
   (:import (java.util UUID)))
 
 (defn setup [test]
-  (reset! service/book-store {:books []})
+  (store/clear)
   (test))
 
 (use-fixtures :each setup)

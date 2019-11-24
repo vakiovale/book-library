@@ -12,9 +12,11 @@
                  [ring/ring-jetty-adapter "1.6.3"]
                  [ring/ring-devel "1.6.3"]
                  [com.novemberain/monger "3.5.0"]]
-  :plugins [[lein-ring "0.12.5"]]
+  :plugins [[lein-ring "0.12.5"]
+            [lein-environ "1.1.0"]]
   :ring {:handler book-library.core/app}
   :uberjar-name "book-library-standalone.jar"
   :profiles {:uberjar {:aot :all}
+             :test    {:env {:book-library-db "book-library-test"}}
              :dev     {:dependencies [[javax.servlet/servlet-api "2.5"]
                                       [ring/ring-mock "0.3.2"]]}})

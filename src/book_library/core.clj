@@ -7,9 +7,8 @@
             [ring.util.response :refer :all]
             [book-library.book-service :as service]
             [book-library.database :as db]
+            [book-library.book-store :as store]
             [cheshire.core :refer [parse-string]]))
-
-(def db-connection (db/open-db-connection (env :mongodb-uri)))
 
 (defn book-creation-handler [req]
   (created "/books" (service/create-book (:body req))))
@@ -30,4 +29,4 @@
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 3000))]
     (run-jetty app {:port port})
-    (db/close-db-connection db-connection)))
+    (store/close)))
