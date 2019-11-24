@@ -9,9 +9,7 @@
             [book-library.database :as db]
             [cheshire.core :refer [parse-string]]))
 
-(def db-connection (if-let [uri (env :mongodb-uri)]
-                     (db/open-db-connection uri)
-                     (db/open-db-connection)))
+(def db-connection (db/open-db-connection (env :mongodb-uri)))
 
 (defn book-creation-handler [req]
   (created "/books" (service/create-book (:body req))))
