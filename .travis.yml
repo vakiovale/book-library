@@ -1,1 +1,5 @@
 language: clojure
+
+before_script:
+  - sleep 15
+  - mongo mydb_test --eval 'db.createUser({user:"root",pwd:"secret",roles:["readWrite"]});'
