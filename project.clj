@@ -11,7 +11,8 @@
                  [ring/ring-core "1.6.3"]
                  [ring/ring-jetty-adapter "1.6.3"]
                  [ring/ring-devel "1.6.3"]
-                 [com.novemberain/monger "3.5.0"]]
+                 [com.novemberain/monger "3.5.0"]
+                 [buddy "2.0.0"]]
   :plugins [[lein-ring "0.12.5"]
             [lein-environ "1.1.0"]]
   :ring {:handler book-library.core/app}
