@@ -29,7 +29,13 @@
   (map create (deserialize (mc/find-maps db coll))))
 
 (defn add-book [book]
-  (create (deserialize (mc/insert-and-return db coll (serialize (merge book {:id (UUID/randomUUID)}))))))
+  (create (deserialize
+            (mc/insert-and-return
+              db
+              coll
+              (serialize
+                (create
+                  (merge book {:id (UUID/randomUUID)})))))))
 
 (defn remove-book [id]
   (mc/remove-by-id db coll id))
