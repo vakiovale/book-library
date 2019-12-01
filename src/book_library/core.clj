@@ -6,7 +6,6 @@
             [compojure.route :as route]
             [ring.util.response :refer :all]
             [book-library.book-service :as service]
-            [book-library.database :as db]
             [book-library.book-store :as store]
             [cheshire.core :refer [parse-string]]))
 
