@@ -18,7 +18,10 @@
 
 (defroutes app
            (GET "/" [] "Hello World!")
-           (GET "/books" [] (wrap-json-response get-books-handler))
+           (GET "/books" []
+             (->
+               get-books-handler
+               wrap-json-response))
            (POST "/books" []
              (->
                book-creation-handler
