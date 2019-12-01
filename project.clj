@@ -18,6 +18,9 @@
   :ring {:handler book-library.core/app}
   :uberjar-name "book-library-standalone.jar"
   :profiles {:uberjar {:aot :all}
-             :test    {:env {:book-library-db "book-library-test"}}
+             :test    {:env {:book-library-db "book-library-test"
+                             :jwt-secret      "jwtsecret"}}
              :dev     {:dependencies [[javax.servlet/servlet-api "2.5"]
-                                      [ring/ring-mock "0.3.2"]]}})
+                                      [ring/ring-mock "0.3.2"]]
+                       :env          {:book-library-db "book-library-dev"
+                                      :jwt-secret      "jwtsecret"}}})
