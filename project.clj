@@ -22,5 +22,6 @@
                              :jwt-secret      "jwtsecret"}}
              :dev     {:dependencies [[javax.servlet/servlet-api "2.5"]
                                       [ring/ring-mock "0.3.2"]]
+                       :plugins      [[jonase/eastwood "0.3.6"]]
                        :env          {:book-library-db "book-library-dev"
                                       :jwt-secret      "jwtsecret"}}})
