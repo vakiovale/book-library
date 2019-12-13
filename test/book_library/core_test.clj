@@ -25,4 +25,4 @@
 (deftest get-books
   (testing "should get list of books"
     (let [response (app (mock/request :get "/books"))]
-      (is (= (vector? (cheshire.core/parse-string (:body response))))))))
+      (is (sequential? (cheshire.core/parse-string (:body response)))))))
