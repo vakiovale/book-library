@@ -1,5 +1,7 @@
 language: clojure
 
+script: lein test && lein eastwood
+
 services:
   - docker
 
