@@ -5,9 +5,9 @@
             [book-library.book-service :as service])
   (:import (java.util UUID)))
 
-(defn setup [test]
+(defn setup [test-fun]
   (store/clear)
-  (test))
+  (test-fun))
 
 (use-fixtures :each setup)
 
@@ -22,7 +22,7 @@
 
 (deftest get-books
   (testing "should get empty list of books if no books exist"
-    (is (= (empty? (service/get-books)))))
+    (is (empty? (service/get-books))))
   (testing "should get list of books"
     (service/create-book {:name "Nice Book"})
     (service/create-book {:name "Bad Book"})
@@ -34,7 +34,7 @@
     (let [book (service/create-book {:name "Remove me!"})]
       (is (= (count (service/get-books)) 1))
       (service/remove-book (:id book))
-      (is (= (count (service/get-books))))))
+      (is (= (count (service/get-books)) 0))))
   (testing "should not remove anything if ID does not exist"
     (service/create-book {:name "Don't remove me"})
     (service/create-book {:name "It would be nice not to remove me"})
