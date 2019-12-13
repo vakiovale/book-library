@@ -53,8 +53,13 @@
                wrap-json-response))
            (route/not-found "Not Found"))
 
-(defn -main [& [port]]
-  (let [port (Integer. (or port (env :port) 3000))]
+(defn resolve-port [arg]
+  (if-let [port (or arg (env :port))]
+    (Integer/parseInt port)
+    3000))
+
+(defn -main [& [arg]]
+  (let [port (resolve-port arg)]
     (-> app
         (run-jetty {:port port}))
     (store/close)))
