@@ -25,8 +25,8 @@
 (defn serialize [to-serialize]
   (rename-keys to-serialize {:id :_id}))
 
-(defn get-books []
-  (map create (deserialize (mc/find-maps db coll))))
+(defn get-books [user]
+  (map create (deserialize (mc/find-maps db coll {:user user}))))
 
 (defn add-book [book]
   (create (deserialize

@@ -9,8 +9,8 @@
 
 (defn get-books
   "Get list of books"
-  []
-  (store/get-books))
+  [user]
+  (store/get-books user))
 
 (defn remove-book
   "Removes a book"
