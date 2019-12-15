@@ -2,6 +2,7 @@
   (:require [clojure.test :refer :all]
             [ring.mock.request :as mock]
             [book-library.core :refer :all]
+            [book-library.security.jwt :refer :all]
             [cheshire.core :refer :all]))
 
 (deftest test-app
@@ -15,14 +16,24 @@
       (is (= (:status response) 404)))))
 
 (deftest create-book
+  (testing "should not create book without authentication"
+    (let [response (app (->
+                          (mock/request :post "/books")
+                          (mock/json-body {:name "Bad book!"})))]
+      (is (= (:status response) 401))))
   (testing "should create a book"
     (let [response (app (->
                           (mock/request :post "/books")
+                          (mock/header :authorization (str "Bearer " (create-token {:sub "user1@example.com"})))
                           (mock/json-body {:name "My best book"})))]
       (is (= (:name (cheshire.core/parse-string (:body response) true)) "My best book"))
       (is (= (:status response) 201)))))
 
 (deftest get-books
+  (testing "should not get books without authentication"
+    (is (= (:status (app (mock/request :get "/books"))) 401)))
   (testing "should get list of books"
-    (let [response (app (mock/request :get "/books"))]
+    (let [response (app (->
+                          (mock/request :get "/books")
+                          (mock/header :authorization (str "Bearer " (create-token {:sub "user1@example.com"})))))]
       (is (sequential? (cheshire.core/parse-string (:body response)))))))

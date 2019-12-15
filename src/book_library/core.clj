@@ -15,13 +15,21 @@
             [clojure.walk :refer :all]
             [cheshire.core :refer [parse-string]]))
 
-(def backend (backends/jws {:secret     env-secret
-                            :token-name "Bearer"}))
+(defn unauth-handler [request metadata]
+  (status metadata 401))
+
+(def backend (backends/jws {:secret               env-secret
+                            :token-name           "Bearer"
+                            :unauthorized-handler unauth-handler}))
 
 (defn book-creation-handler [req]
+  (when (not (authenticated? req))
+    (throw-unauthorized {:message "Not authorized"}))
   (created "/books" (service/create-book (:body req))))
 
 (defn get-books-handler [req]
+  (when (not (authenticated? req))
+    (throw-unauthorized {:message "Not authorized"}))
   (response (service/get-books nil)))
 
 (defn test-login-handler [req]
@@ -42,15 +50,21 @@
              (->
                test-login-handler
                wrap-params))
-           (GET "/books" []
-             (->
-               get-books-handler
-               wrap-json-response))
-           (POST "/books" []
-             (->
-               book-creation-handler
-               (wrap-json-body {:keywords? true})
-               wrap-json-response))
+           (->
+             (GET "/books" []
+               (->
+                 get-books-handler
+                 wrap-json-response))
+             (wrap-authentication backend)
+             (wrap-authorization backend))
+           (->
+             (POST "/books" []
+               (->
+                 book-creation-handler
+                 (wrap-json-body {:keywords? true})
+                 wrap-json-response))
+             (wrap-authentication backend)
+             (wrap-authorization backend))
            (route/not-found "Not Found"))
 
 (defn resolve-port [arg]
