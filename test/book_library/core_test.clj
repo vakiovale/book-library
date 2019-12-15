@@ -36,6 +36,31 @@
     (let [response (app (mock/request :get "/invalid"))]
       (is (= (:status response) 404)))))
 
+(deftest enable-test-login
+  (with-redefs [environ.core/env (fn [_] "true")]
+    (testing "when env variable is true, should return status 200"
+      (is (= (:status (app (mock/request :get "/test-login"))) 200)))))
+
+(deftest form-test-login
+  (with-redefs [environ.core/env (fn [_] "(= 1 1)")]
+    (testing "when env variable is truthy form (= 1 1), should return status 404"
+      (is (= (:status (app (mock/request :get "/test-login"))) 404)))))
+
+(deftest disable-test-login
+  (with-redefs [environ.core/env (fn [_] "false")]
+    (testing "when env variable is false, should return status 404"
+      (is (= (:status (app (mock/request :get "/test-login"))) 404)))))
+
+(deftest nil-test-login
+  (with-redefs [environ.core/env (fn [_] nil)]
+    (testing "when env variable is nil, should return status 404"
+      (is (= (:status (app (mock/request :get "/test-login"))) 404)))))
+
+(deftest nonsense-test-login
+  (with-redefs [environ.core/env (fn [_] "ThisIsBadEnvVar")]
+    (testing "when env variable is not true or false, should return status 404"
+      (is (= (:status (app (mock/request :get "/test-login"))) 404)))))
+
 (deftest create-book
   (testing "should not create book without authentication"
     (let [response (app (->

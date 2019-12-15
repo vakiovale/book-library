@@ -15,6 +15,11 @@
             [clojure.walk :refer :all]
             [cheshire.core :refer [parse-string]]))
 
+(defn test-login-enabled []
+  (try
+    (true? (read-string (env :enable-test-login)))
+    (catch Exception e false)))
+
 (defn unauth-handler [request metadata]
   (status metadata 401))
 
@@ -52,7 +57,7 @@
 (defroutes app
            (GET "/" [] hello-world)
            (GET "/test-login" []
-             (if (env :enable-test-login)
+             (if (test-login-enabled)
                (->
                  test-login-handler
                  wrap-params)
