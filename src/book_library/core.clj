@@ -50,21 +50,19 @@
              (->
                test-login-handler
                wrap-params))
-           (->
-             (GET "/books" []
-               (->
-                 get-books-handler
-                 wrap-json-response))
-             (wrap-authentication backend)
-             (wrap-authorization backend))
-           (->
-             (POST "/books" []
-               (->
-                 book-creation-handler
-                 (wrap-json-body {:keywords? true})
-                 wrap-json-response))
-             (wrap-authentication backend)
-             (wrap-authorization backend))
+           (GET "/books" []
+             (->
+               get-books-handler
+               wrap-json-response
+               (wrap-authentication backend)
+               (wrap-authorization backend)))
+           (POST "/books" []
+             (->
+               book-creation-handler
+               (wrap-json-body {:keywords? true})
+               wrap-json-response
+               (wrap-authentication backend)
+               (wrap-authorization backend)))
            (route/not-found "Not Found"))
 
 (defn resolve-port [arg]
