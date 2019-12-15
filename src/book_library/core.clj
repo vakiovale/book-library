@@ -22,14 +22,16 @@
                             :token-name           "Bearer"
                             :unauthorized-handler unauth-handler}))
 
+(defn authenticated-user [handler]
+  (fn [request]
+    (when (not (authenticated? request))
+      (throw-unauthorized {:message "Not authorized"}))
+    (handler request)))
+
 (defn book-creation-handler [req]
-  (when (not (authenticated? req))
-    (throw-unauthorized {:message "Not authorized"}))
   (created "/books" (service/create-book (:body req))))
 
 (defn get-books-handler [req]
-  (when (not (authenticated? req))
-    (throw-unauthorized {:message "Not authorized"}))
   (response (service/get-books nil)))
 
 (defn test-login-handler [req]
@@ -53,12 +55,14 @@
            (GET "/books" []
              (->
                get-books-handler
+               authenticated-user
                wrap-json-response
                (wrap-authentication backend)
                (wrap-authorization backend)))
            (POST "/books" []
              (->
                book-creation-handler
+               authenticated-user
                (wrap-json-body {:keywords? true})
                wrap-json-response
                (wrap-authentication backend)
