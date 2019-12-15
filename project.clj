@@ -19,9 +19,11 @@
   :uberjar-name "book-library-standalone.jar"
   :profiles {:uberjar {:aot :all}
              :test    {:env {:book-library-db "book-library-test"
-                             :jwt-secret      "jwtsecret-test"}}
+                             :jwt-secret      "jwtsecret-test"
+                             :enable-test-login true}}
              :dev     {:dependencies [[javax.servlet/servlet-api "2.5"]
                                       [ring/ring-mock "0.3.2"]]
                        :plugins      [[jonase/eastwood "0.3.6"]]
                        :env          {:book-library-db "book-library-dev"
-                                      :jwt-secret      "jwtsecret-dev"}}})
+                                      :jwt-secret      "jwtsecret-dev"
+                                      :enable-test-login true}}})

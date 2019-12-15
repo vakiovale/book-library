@@ -52,9 +52,11 @@
 (defroutes app
            (GET "/" [] hello-world)
            (GET "/test-login" []
-             (->
-               test-login-handler
-               wrap-params))
+             (if (env :enable-test-login)
+               (->
+                 test-login-handler
+                 wrap-params)
+               (route/not-found "Not found")))
            (GET "/books" []
              (->
                get-books-handler
