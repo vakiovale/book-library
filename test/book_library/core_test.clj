@@ -5,6 +5,9 @@
             [book-library.security.jwt :refer :all]
             [cheshire.core :refer :all]))
 
+(def test-user-token
+  (str "Bearer " (create-token {:sub "user1@example.com"})))
+
 (deftest test-app
   (testing "main route"
     (let [response (app (mock/request :get "/"))]
@@ -24,7 +27,7 @@
   (testing "should create a book"
     (let [response (app (->
                           (mock/request :post "/books")
-                          (mock/header :authorization (str "Bearer " (create-token {:sub "user1@example.com"})))
+                          (mock/header :authorization test-user-token)
                           (mock/json-body {:name "My best book"})))]
       (is (= (:name (cheshire.core/parse-string (:body response) true)) "My best book"))
       (is (= (:status response) 201)))))
@@ -35,5 +38,5 @@
   (testing "should get list of books"
     (let [response (app (->
                           (mock/request :get "/books")
-                          (mock/header :authorization (str "Bearer " (create-token {:sub "user1@example.com"})))))]
+                          (mock/header :authorization test-user-token)))]
       (is (sequential? (cheshire.core/parse-string (:body response)))))))
