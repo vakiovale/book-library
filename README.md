@@ -4,6 +4,10 @@
 
 ## How to
 
+### Test login
+
+Endpoint `localhost:3000/test-login?user=my-user-name` can be used to retrieve a valid JWT token in development/testing environments.
+
 ### cURL
 
 Get all books:
