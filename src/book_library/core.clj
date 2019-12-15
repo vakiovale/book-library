@@ -32,7 +32,7 @@
   (created "/books" (service/create-book (:body req))))
 
 (defn get-books-handler [req]
-  (response (service/get-books nil)))
+  (response (service/get-books (:sub (:identity req)))))
 
 (defn test-login-handler [req]
   (response

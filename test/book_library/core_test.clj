@@ -3,13 +3,28 @@
             [ring.mock.request :as mock]
             [book-library.core :refer :all]
             [book-library.security.jwt :refer :all]
-            [cheshire.core :refer :all]))
+            [cheshire.core :refer :all]
+            [book-library.book-store :as store]
+            [book-library.book-service :as service]
+            [book-library.book :as Book]))
+
+(defn setup [test-fun]
+  (store/clear)
+  (test-fun))
+
+(use-fixtures :each setup)
 
 (def test-user-token
   (str "Bearer " (create-token {:sub "user1@example.com"})))
 
 (def bad-user-token
   (str "Bearer " (create-token {:sub "user1@example.com"} "bad-password-123")))
+
+(defn read-books [response]
+  (map Book/create (cheshire.core/parse-string (:body response) true)))
+
+(defn read-book [response]
+  (Book/create (cheshire.core/parse-string (:body response) true)))
 
 (deftest test-app
   (testing "main route"
@@ -32,7 +47,7 @@
                           (mock/request :post "/books")
                           (mock/header :authorization test-user-token)
                           (mock/json-body {:name "My best book"})))]
-      (is (= (:name (cheshire.core/parse-string (:body response) true)) "My best book"))
+      (is (= (:name (read-book response)) "My best book"))
       (is (= (:status response) 201)))))
 
 (deftest get-books
@@ -46,4 +61,16 @@
     (let [response (app (->
                           (mock/request :get "/books")
                           (mock/header :authorization test-user-token)))]
-      (is (sequential? (cheshire.core/parse-string (:body response)))))))
+      (is (sequential? (read-books response)))))
+  (testing "should get only own books"
+    (service/create-book {:name "Your book1" :user "user2@example.com"})
+    (service/create-book {:name "Your book2" :user "user2@example.com"})
+    (service/create-book {:name "My book1" :user "user1@example.com"})
+    (service/create-book {:name "My book2" :user "user1@example.com"})
+    (service/create-book {:name "No-ones book"})
+    (service/create-book {:name "Your book3" :user "user2@example.com"})
+    (let [response (app (->
+                          (mock/request :get "/books")
+                          (mock/header :authorization test-user-token)))]
+      (is (= (count (map :user (read-books response))) 2))
+      (is (every? #(= % "user1@example.com") (map :user (read-books response)))))))
