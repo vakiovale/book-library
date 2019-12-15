@@ -8,6 +8,9 @@
 (def test-user-token
   (str "Bearer " (create-token {:sub "user1@example.com"})))
 
+(def bad-user-token
+  (str "Bearer " (create-token {:sub "user1@example.com"} "bad-password-123")))
+
 (deftest test-app
   (testing "main route"
     (let [response (app (mock/request :get "/"))]
@@ -35,6 +38,10 @@
 (deftest get-books
   (testing "should not get books without authentication"
     (is (= (:status (app (mock/request :get "/books"))) 401)))
+  (testing "should not get books with bad token"
+    (is (= (:status (app (->
+                           (mock/request :get "/books")
+                           (mock/header :authorization bad-user-token)))) 401)))
   (testing "should get list of books"
     (let [response (app (->
                           (mock/request :get "/books")
