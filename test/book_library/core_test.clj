@@ -48,6 +48,7 @@
                           (mock/header :authorization test-user-token)
                           (mock/json-body {:name "My best book"})))]
       (is (= (:name (read-book response)) "My best book"))
+      (is (= (:user (read-book response)) "user1@example.com"))
       (is (= (:status response) 201)))))
 
 (deftest get-books

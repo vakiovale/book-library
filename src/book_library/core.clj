@@ -29,7 +29,10 @@
     (handler request)))
 
 (defn book-creation-handler [req]
-  (created "/books" (service/create-book (:body req))))
+  (created "/books" (service/create-book
+                      (merge
+                        (:body req)
+                        {:user (:sub (:identity req))}))))
 
 (defn get-books-handler [req]
   (response (service/get-books (:sub (:identity req)))))
