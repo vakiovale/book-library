@@ -40,13 +40,15 @@
                         (:body req)
                         {:user (:sub (:identity req))}))))
 
+(defn book-not-found [] (not-found "Book not found"))
+
 (defn get-book-handler [id]
   (fn [req]
     (let [book (service/get-book id)]
       (cond
-        (nil? book) (not-found "Book not found")
+        (nil? book) (book-not-found)
         (= (Book/get-user book) (:sub (:identity req))) (response book)
-        :else (not-found "Book not found")))))
+        :else (book-not-found)))))
 
 (defn get-books-handler [req]
   (response (service/get-books (:sub (:identity req)))))
