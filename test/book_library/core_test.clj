@@ -100,3 +100,22 @@
                           (mock/header :authorization test-user-token)))]
       (is (= (count (map :user (read-books response))) 2))
       (is (every? #(= % "user1@example.com") (map :user (read-books response)))))))
+
+(deftest get-book-by-id
+  (testing "should get status 401 without authentication"
+    (is (= (:status (app (mock/request :get "/books/incorrect-id"))) 401)))
+  (testing "should get correct book with existing id"
+    (let [book (service/create-book {:name "Book For Dummies" :user "user1@example.com"})]
+      (let [response (app (-> (mock/request :get (str "/books/" (Book/get-id book)))
+                              (mock/header :authorization test-user-token)))]
+        (is (= (:status response) 200))
+        (is (= (Book/get-id (read-book response)) (Book/get-id book))))))
+  (testing "should get status 404 if id does not exist"
+    (is (= (:status (app (->
+                           (mock/request :get "/books/notfoundnotfound")
+                           (mock/header :authorization test-user-token)))) 404)))
+  (testing "should get status 404 with somone else's book id"
+    (let [book (service/create-book {:name "Book For Dummies" :user "notme@example.com"})]
+      (is (= (:status (app (->
+                             (mock/request :get (str "/books/" (Book/get-id book)))
+                             (mock/header :authorization test-user-token)))) 404)))))

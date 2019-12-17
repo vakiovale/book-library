@@ -9,6 +9,7 @@
             [book-library.book-service :as service]
             [book-library.book-store :as store]
             [book-library.security.jwt :refer :all]
+            [book-library.book :as Book]
             [buddy.auth :refer [authenticated? throw-unauthorized]]
             [buddy.auth.backends :as backends]
             [buddy.auth.middleware :refer [wrap-authorization wrap-authentication]]
@@ -39,6 +40,14 @@
                         (:body req)
                         {:user (:sub (:identity req))}))))
 
+(defn get-book-handler [id]
+  (fn [req]
+    (let [book (service/get-book id)]
+      (cond
+        (nil? book) (not-found "Book not found")
+        (= (Book/get-user book) (:sub (:identity req))) (response book)
+        :else (not-found "Book not found")))))
+
 (defn get-books-handler [req]
   (response (service/get-books (:sub (:identity req)))))
 
@@ -65,6 +74,13 @@
            (GET "/books" []
              (->
                get-books-handler
+               authenticated-user
+               wrap-json-response
+               (wrap-authentication backend)
+               (wrap-authorization backend)))
+           (GET "/books/:id" [id]
+             (->
+               (get-book-handler id)
                authenticated-user
                wrap-json-response
                (wrap-authentication backend)

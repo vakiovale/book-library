@@ -35,7 +35,7 @@
               coll
               (serialize
                 (create
-                  (merge book {:id (UUID/randomUUID)})))))))
+                  (merge book {:id (str (UUID/randomUUID))})))))))
 
 (defn remove-book [id]
   (mc/remove-by-id db coll id))

@@ -22,8 +22,8 @@
       (is (= (Book/get-name book) "The Greatest Book")))
     (testing "book should have a user"
       (is (= (Book/get-user book) "user1@example.com")))
-    (testing "book's ID should be an UUID"
-      (is (uuid? (Book/get-id book))))))
+    (testing "book's ID should be convertable to UUID"
+      (is (uuid? (java.util.UUID/fromString (Book/get-id book)))))))
 
 (deftest get-books
   (testing "should get empty list of books if no books exist"
@@ -54,7 +54,7 @@
     (let [id (Book/get-id (service/create-book (merge {:name "Find me, please!"} user-1)))]
       (is (= (Book/get-id (service/get-book id)) id))))
   (testing "should get nil with non existing ID"
-    (is (nil? (service/get-book (UUID/randomUUID))))))
+    (is (nil? (service/get-book (str (UUID/randomUUID)))))))
 
 (deftest own-books
   (testing "should get only books for specific user"
