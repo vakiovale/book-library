@@ -46,9 +46,9 @@
   (fn [req]
     (let [book (service/get-book id)]
       (cond
-        (nil? book) (book-not-found)
+        (nil? book)                                     (book-not-found)
         (= (Book/get-user book) (:sub (:identity req))) (response book)
-        :else (book-not-found)))))
+        :else                                           (book-not-found)))))
 
 (defn get-books-handler [req]
   (response (service/get-books (:sub (:identity req)))))
@@ -64,43 +64,43 @@
 
 (defn hello-world [req]
   "<html>
-    <body>
-      <h1>Hello World!</h1>
-    </body>
-    <a href=\"/test-login?user=test@user\">TEST LOGIN</a>
-  </html>")
+     <body>
+       <h1>Hello World!</h1>
+     </body>
+     <a href=\"/test-login?user=test@user\">TEST LOGIN</a>
+   </html>")
 
 (defroutes app
-           (GET "/" [] hello-world)
-           (GET "/test-login" []
-             (if (test-login-enabled)
-               (->
-                 test-login-handler
-                 wrap-params)
-               (route/not-found "Not found")))
-           (GET "/books" []
-             (->
-               get-books-handler
-               authenticated-user
-               wrap-json-response
-               (wrap-authentication backend)
-               (wrap-authorization backend)))
-           (GET "/books/:id" [id]
-             (->
-               (get-book-handler id)
-               authenticated-user
-               wrap-json-response
-               (wrap-authentication backend)
-               (wrap-authorization backend)))
-           (POST "/books" []
-             (->
-               book-creation-handler
-               authenticated-user
-               (wrap-json-body {:keywords? true})
-               wrap-json-response
-               (wrap-authentication backend)
-               (wrap-authorization backend)))
-           (route/not-found "Not Found"))
+  (GET "/" [] hello-world)
+  (GET "/test-login" []
+       (if (test-login-enabled)
+         (->
+           test-login-handler
+           wrap-params)
+         (route/not-found "Not found")))
+  (GET "/books" []
+       (->
+         get-books-handler
+         authenticated-user
+         wrap-json-response
+         (wrap-authentication backend)
+         (wrap-authorization backend)))
+  (GET "/books/:id" [id]
+       (->
+         (get-book-handler id)
+         authenticated-user
+         wrap-json-response
+         (wrap-authentication backend)
+         (wrap-authorization backend)))
+  (POST "/books" []
+        (->
+          book-creation-handler
+          authenticated-user
+          (wrap-json-body {:keywords? true})
+          wrap-json-response
+          (wrap-authentication backend)
+          (wrap-authorization backend)))
+  (route/not-found "Not Found"))
 
 (defn resolve-port [arg]
   (if-let [port (or arg (env :port))]
