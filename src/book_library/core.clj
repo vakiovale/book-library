@@ -63,7 +63,12 @@
               :user)})))
 
 (defn hello-world [req]
-  "Hello World!")
+  "<html>
+    <body>
+      <h1>Hello World!</h1>
+    </body>
+    <a href=\"/test-login?user=test@user\">TEST LOGIN</a>
+  </html>")
 
 (defroutes app
            (GET "/" [] hello-world)
