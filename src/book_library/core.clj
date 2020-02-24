@@ -62,13 +62,18 @@
               keywordize-keys
               :user)})))
 
-(defn hello-world [req]
+(defn- hello-world-with-login-html []
   "<html>
      <body>
        <h1>Hello World!</h1>
      </body>
      <a href=\"/test-login?user=test@user\">TEST LOGIN</a>
-   </html>")
+    </html>")
+
+(defn hello-world [req]
+  (if (test-login-enabled)
+    (hello-world-with-login-html)
+    "Hello World!"))
 
 (defroutes app
   (GET "/" [] hello-world)
