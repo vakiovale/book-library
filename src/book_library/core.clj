@@ -55,7 +55,7 @@
     (let [book (service/get-book id)]
       (cond
         (nil? book)                                     (book-not-found)
-        (= (Book/get-user book) (:sub (:identity req))) (response (service/remove-book id))
+        (= (Book/get-user book) (:sub (:identity req))) (do (service/remove-book id) (response "Book removed"))
         :else                                           (book-not-found)))))
 
 (defn get-books-handler [req]
@@ -117,6 +117,7 @@
           (->
             (book-deletion-handler id)
             authenticated-user
+            wrap-json-response
             (wrap-authentication backend)
             (wrap-authorization backend)))
   (route/not-found "Not Found"))
