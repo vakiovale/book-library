@@ -6,7 +6,8 @@
             [cheshire.core :refer :all]
             [book-library.book-store :as store]
             [book-library.book-service :as service]
-            [book-library.book :as Book]))
+            [book-library.book :as Book])
+  (:import (java.util UUID)))
 
 (defn setup [test-fun]
   (store/clear)
@@ -129,3 +130,34 @@
       (is (= (:status (app (->
                             (mock/request :get (str "/books/" (Book/get-id book)))
                             (mock/header :authorization test-user-token)))) 404)))))
+
+(deftest delete-book-by-id
+  (testing "should get status 401 without authentication"
+    (let [book (service/create-book {:name "Try to delete me!" :user "user1@example.com"})]
+      (let [response (app
+                      (->
+                       (mock/request :delete (str "/books/" (Book/get-id book)))))]
+        (is (= (:status response) 401)))))
+
+  (testing "should get status 200 when deleting a book"
+    (let [book (service/create-book {:name "Try to delete me!" :user "user1@example.com"})]
+      (let [response (app
+                      (->
+                       (mock/request :delete (str "/books/" (Book/get-id book)))
+                       (mock/header :authorization test-user-token)))]
+        (is (= (:status response) 200)))))
+
+  (testing "should get status 404 when trying to delete someone else's book"
+    (let [book (service/create-book {:name "Someone else's book" :user "user2@example.com"})]
+      (let [response (app
+                      (->
+                       (mock/request :delete (str "/books/" (Book/get-id book)))
+                       (mock/header :authorization test-user-token)))]
+        (is (= (:status response) 404)))))
+
+  (testing "should get status 404 when trying to delete book that does not exist"
+    (let [response (app
+                    (->
+                     (mock/request :delete (str "/books/" (java.util.UUID/randomUUID)))
+                     (mock/header :authorization test-user-token)))]
+      (is (= (:status response) 404)))))
